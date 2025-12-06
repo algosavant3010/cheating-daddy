@@ -1,0 +1,36 @@
+{
+  "presets": [
+    ["@babel/preset-env", {
+      "modules": false,
+      "targets": {
+        "electron": "30"
+      }
+    }],
+    ["@babel/preset-react", {
+      "runtime": "automatic"
+    }]
+  ],
+  "env": {
+    "development": {
+      "presets": [
+        ["@babel/preset-env", {
+          "modules": "commonjs"
+        }],
+        ["@babel/preset-react", {
+          "development": true,
+          "runtime": "automatic"
+        }]
+      ]
+    },
+    "test": {
+      "presets": [
+        ["@babel/preset-env", {
+          "modules": "commonjs"
+        }],
+        ["@babel/preset-react", {
+          "runtime": "automatic"
+        }]
+      ]
+    }
+  }
+}
