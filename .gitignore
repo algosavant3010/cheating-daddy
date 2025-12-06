@@ -1,5 +1,7 @@
 # Logs
 src/data
+src/renderer-bundle.js
+src/renderer-bundle.js.map
 logs
 *.log
 npm-debug.log*
