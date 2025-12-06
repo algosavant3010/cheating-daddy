@@ -1,6 +1,32 @@
 // renderer.js
 const { ipcRenderer } = require('electron');
 
+const uiBridge = {
+    setStatus: () => {},
+    setResponse: () => {},
+    getCurrentView: () => 'main',
+    getLayoutMode: () => localStorage.getItem('layoutMode') || 'normal',
+    startSession: null,
+};
+
+function registerUIHooks(hooks = {}) {
+    if (typeof hooks.setStatus === 'function') {
+        uiBridge.setStatus = hooks.setStatus;
+    }
+    if (typeof hooks.setResponse === 'function') {
+        uiBridge.setResponse = hooks.setResponse;
+    }
+    if (typeof hooks.getCurrentView === 'function') {
+        uiBridge.getCurrentView = hooks.getCurrentView;
+    }
+    if (typeof hooks.getLayoutMode === 'function') {
+        uiBridge.getLayoutMode = hooks.getLayoutMode;
+    }
+    if (typeof hooks.startSession === 'function') {
+        uiBridge.startSession = hooks.startSession;
+    }
+}
+
 // Initialize random display name for UI components
 window.randomDisplayName = null;
 
@@ -734,33 +760,30 @@ ipcRenderer.on('clear-sensitive-data', () => {
 
 // Handle shortcuts based on current view
 function handleShortcut(shortcutKey) {
-    const currentView = cheddar.getCurrentView();
+    const currentView = uiBridge.getCurrentView();
 
     if (shortcutKey === 'ctrl+enter' || shortcutKey === 'cmd+enter') {
         if (currentView === 'main') {
-            cheddar.element().handleStart();
+            if (typeof uiBridge.startSession === 'function') {
+                uiBridge.startSession();
+            }
         } else {
             captureManualScreenshot();
         }
     }
 }
 
-// Create reference to the main app element
-const cheatingDaddyApp = document.querySelector('cheating-daddy-app');
-
 // Consolidated cheddar object - all functions in one place
 const cheddar = {
-    // Element access
-    element: () => cheatingDaddyApp,
-    e: () => cheatingDaddyApp,
+    registerUIHooks,
 
-    // App state functions - access properties directly from the app element
-    getCurrentView: () => cheatingDaddyApp.currentView,
-    getLayoutMode: () => cheatingDaddyApp.layoutMode,
+    // App state access
+    getCurrentView: () => uiBridge.getCurrentView(),
+    getLayoutMode: () => uiBridge.getLayoutMode(),
 
     // Status and response functions
-    setStatus: text => cheatingDaddyApp.setStatus(text),
-    setResponse: response => cheatingDaddyApp.setResponse(response),
+    setStatus: text => uiBridge.setStatus(text),
+    setResponse: response => uiBridge.setResponse(response),
 
     // Core functionality
     initializeGemini,
@@ -781,8 +804,8 @@ const cheddar = {
     },
 
     // Platform detection
-    isLinux: isLinux,
-    isMacOS: isMacOS,
+    isLinux,
+    isMacOS,
 };
 
 // Make it globally available

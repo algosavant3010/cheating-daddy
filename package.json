@@ -6,11 +6,15 @@
     "main": "src/index.js",
     "scripts": {
         "start": "electron-forge start",
+        "prestart": "npm run build:renderer",
         "package": "electron-forge package",
+        "prepackage": "npm run build:renderer",
         "make": "electron-forge make",
+        "premake": "npm run build:renderer",
         "publish": "electron-forge publish",
         "lint": "echo \"No linting configured\"",
-        "test": "vitest run"
+        "test": "vitest run",
+        "build:renderer": "node scripts/build-renderer.js"
     },
     "keywords": [
         "cheating daddy",
@@ -26,7 +30,10 @@
     "license": "GPL-3.0",
     "dependencies": {
         "@google/genai": "^1.2.0",
-        "electron-squirrel-startup": "^1.0.1"
+        "electron-squirrel-startup": "^1.0.1",
+        "react": "^18.3.1",
+        "react-dom": "^18.3.1",
+        "styled-components": "^6.1.13"
     },
     "devDependencies": {
         "@electron-forge/cli": "^7.8.1",
@@ -41,6 +48,7 @@
         "@reforged/maker-appimage": "^5.0.0",
         "vitest": "^1.6.1",
         "jsdom": "^23.2.0",
-        "electron": "^30.0.5"
+        "electron": "^30.0.5",
+        "esbuild": "^0.23.1"
     }
 }
